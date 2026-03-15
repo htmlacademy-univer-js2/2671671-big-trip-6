@@ -1,35 +1,33 @@
-import NewFormView from '../view/create-form-view.js';
-import NewEditFormView from '../view/edit-form-view.js';
-import NewFiltersView from '../view/filters-view.js';
-import NewRoutePointView from '../view/route-point-view.js';
-import NewSortView from '../view/sort-view.js';
-import NewListView from '../view/list-view.js';
-import { render } from '../render.js';
+import {render, RenderPosition} from '../render.js';
+import FiltersView from '../view/filters-view.js';
+import SortView from '../view/sort-view.js';
+import ListView from '../view/list-view.js';
+import RoutePointView from '../view/route-point-view.js';
+import EditFormView from '../view/edit-form-view.js';
+import CreateFormView from '../view/create-form-view.js';
 
 
 export default class BoardPresenter {
-  constructor({ siteHeaderElement, tripEventsElement }) {
-    this.siteHeaderElement = siteHeaderElement;
-    this.tripEventsElement = tripEventsElement;
+  constructor() {
+    this.filtersContainer = document.querySelector('.trip-controls__filters');
+    this.tripEventsContainer = document.querySelector('.trip-events');
   }
 
   init() {
-    const filtersContainer = this.siteHeaderElement.querySelector('.trip-controls__filters');
-    render(new NewFiltersView(), filtersContainer);
 
-    render(new NewSortView(), this.tripEventsElement);
+    render(new FiltersView(), this.filtersContainer, RenderPosition.BEFOREEND);
 
-    const listComponent = new NewListView();
-    render(listComponent, this.tripEventsElement);
+    render(new SortView(), this.tripEventsContainer, RenderPosition.BEFOREEND);
 
-    const eventsListElement = listComponent.getElement();
+    const listView = new ListView();
+    render(listView, this.tripEventsContainer, RenderPosition.BEFOREEND);
 
-    render(new NewEditFormView(), eventsListElement);
+    const listElement = listView.getElement();
+
+    render(new EditFormView(), listElement, RenderPosition.AFTERBEGIN);
 
     for (let i = 0; i < 3; i++) {
-      render(new NewRoutePointView(), eventsListElement);
+      render(new RoutePointView(), listElement, RenderPosition.BEFOREEND);
     }
-
-    render(new NewFormView(), eventsListElement);
   }
 }
