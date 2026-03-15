@@ -1,9 +1,7 @@
 import BoardPresenter from './presenter/board-presenter.js';
 
+const container = document.querySelector('.trip-events__list');
 
-const siteHeaderElement = document.querySelector('.page-header');
-const tripEventsElement = document.querySelector('.trip-events');
-
-const boardPresenter = new BoardPresenter ({ siteHeaderElement, tripEventsElement });
+const boardPresenter = new BoardPresenter(container);
 
 boardPresenter.init();
