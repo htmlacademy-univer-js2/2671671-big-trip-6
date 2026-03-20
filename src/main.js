@@ -1,9 +1,13 @@
 import BoardPresenter from './presenter/board-presenter.js';
+import CreateModel from './model/create-model.js';
+import { destinations, offersByType, generatePoints } from './mock/mock.js';
 
 
-const siteHeaderElement = document.querySelector('.page-header');
-const tripEventsElement = document.querySelector('.trip-events');
-
-const boardPresenter = new BoardPresenter ({ siteHeaderElement, tripEventsElement });
+const createModel = new CreateModel ({
+  points: generatePoints(3),
+  destinations,
+  offersByType,
+});
+const boardPresenter = new BoardPresenter(createModel);
 
 boardPresenter.init();
