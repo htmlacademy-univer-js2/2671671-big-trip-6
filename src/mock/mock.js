@@ -1,53 +1,62 @@
-import {POINT_TYPES, CITIES, DESCRIPTION} from '../const.js';
-import {createPoint} from '../model/route-point.js';
-import {createDestination} from '../model/destination.js';
-import {createOffer} from '../model/offer.js';
+import { nanoid } from 'nanoid';
 
 
-const getRandomItem = (items) =>
-  items[Math.floor(Math.random() * items.length)];
+const pointTypes = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
-const getRandomPrice = () =>
-  Math.floor(Math.random() * 500);
+const destinations = [
+  {
+    id: 'destination1',
+    name: 'Amsterdam',
+    description: 'Amsterdam is the capital of the Netherlands.',
+    pictures: [
+      { src: 'img/photos/1.jpg', description: 'Amsterdam' },
+      { src: 'img/photos/2.jpg', description: 'Amsterdam canal' }
+    ],
+  },
+  {
+    id: 'destination2',
+    name: 'Chamonix',
+    description: 'Chamonix is a resort area near Mont Blanc.',
+    pictures: [
+      { src: 'img/photos/3.jpg', description: 'Chamonix' }
+    ],
+  },
+];
 
-const getRandomBoolean = () =>
-  Math.random() > 0.5;
+const offersByType = {
+  taxi: [
+    { id: 'o1', title: 'Order Uber', price: 20 },
+    { id: 'o2', title: 'Switch to comfort', price: 80 },
+  ],
+  flight: [
+    { id: 'o3', title: 'Add luggage', price: 50 },
+    { id: 'o4', title: 'Business class', price: 120 },
+  ],
+};
 
-export const generateDestinations = () =>
-  CITIES.map((city, index) =>
-    createDestination({
-      id: String(index + 1),
-      name: city,
-      description: DESCRIPTION,
-      pictures: [
-        {
-          src: `https://loremflickr.com/248/152?random=${index}`,
-          description: city
-        }
-      ]
-    })
-  );
+const getRandomItem = (items) => items[Math.floor(Math.random() * items.length)];
 
-export const generateOffers = () =>
-  POINT_TYPES.map((type, index) =>
-    createOffer({
-      id: String(index + 1),
-      type,
-      title: 'Add luggage',
-      price: getRandomPrice()
-    })
-  );
+const generatePoint = () => {
+  const type = getRandomItem(pointTypes);
+  const destination = getRandomItem(destinations);
+  const possibleOffers = offersByType[type] ?? [];
+  const offersIds = possibleOffers.slice(0, 1).map((o) => o.id);
 
-export const generatePoints = (destinations, offers, count = 5) =>
-  Array.from({length: count}, (_, index) =>
-    createPoint({
-      id: String(index + 1),
-      type: getRandomItem(POINT_TYPES),
-      destination: destinations[Math.floor(Math.random() * destinations.length)].id,
-      dateFrom: new Date(),
-      dateTo: new Date(Date.now() + 3600000),
-      basePrice: getRandomPrice(),
-      isFavorite: getRandomBoolean(),
-      offers: offers.slice(0, 2).map((o) => o.id)
-    })
-  );
+  const dateFrom = new Date();
+  const dateTo = new Date(dateFrom.getTime() + 30 * 60 * 1000);
+
+  return {
+    id: nanoid(),
+    type,
+    destinationId: destination.id,
+    offersIds,
+    basePrice: 20,
+    dateFrom,
+    dateTo,
+    isFavorite: false,
+  };
+};
+
+const generatePoints = (count = 3) => Array.from({ length: count }, generatePoint);
+
+export { destinations, offersByType, generatePoints };

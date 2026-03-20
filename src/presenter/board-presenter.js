@@ -1,21 +1,35 @@
-import CreateModel from '../model/create-model.js';
+import {render, RenderPosition} from '../render.js';
+import FiltersView from '../view/filters-view.js';
+import SortView from '../view/sort-view.js';
+import ListView from '../view/list-view.js';
 import RoutePointView from '../view/route-point-view.js';
-import {render} from '../render.js';
+import EditFormView from '../view/edit-form-view.js';
 
 export default class BoardPresenter {
-
-  constructor(container) {
-    this.container = container;
-    this.createModel = new CreateModel();
+  constructor(pointsModel) {
+    this.pointsModel = pointsModel;
+    this.filtersContainer = document.querySelector('.trip-controls__filters');
+    this.tripEventsContainer = document.querySelector('.trip-events');
   }
 
   init() {
+    render(new FiltersView(), this.filtersContainer, RenderPosition.BEFOREEND);
+    render(new SortView(), this.tripEventsContainer, RenderPosition.BEFOREEND);
 
-    const points = this.CreateModel.getPoints();
+    const listView = new ListView();
+    render(listView, this.tripEventsContainer, RenderPosition.BEFOREEND);
 
-    points.forEach((point) => {
-      const pointComponent = new RoutePointView(point);
-      render(pointComponent, this.container);
-    });
+    const listElement = listView.getElement();
+
+    const firstPoint = this.pointsModel.points[0];
+    render(new EditFormView(firstPoint), listElement, RenderPosition.AFTERBEGIN);
+
+    for (const point of this.pointsModel.points) {
+      const destination = this.pointsModel.getDestinationById(point.destinationId);
+      const offers = this.pointsModel.getOffersByType(point.type)
+        .filter((o) => point.offersIds.includes(o.id));
+
+      render(new RoutePointView({point, destination, offers}), listElement, RenderPosition.BEFOREEND);
+    }
   }
 }

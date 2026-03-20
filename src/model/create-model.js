@@ -1,25 +1,31 @@
-import {createPoint} from './route-point.js';
-import {createDestination} from './destination.js';
-import {createOffer} from './offer.js';
-import {generateDestinations, generateOffers, generatePoints} from '../mock/mock.js';
+export default class CreateModel {
+  #points = [];
+  #destinations = [];
+  #offersByType = {};
 
-export default class PointsModel {
-
-  constructor() {
-    this.destinations = generateDestinations();
-    this.offers = generateOffers();
-    this.points = generatePoints(this.destinations, this.offers);
+  constructor({ points, destinations, offersByType }) {
+    this.#points = points;
+    this.#destinations = destinations;
+    this.#offersByType = offersByType;
   }
 
-  getPoints() {
-    return this.points;
+  get points() {
+    return this.#points;
   }
 
-  getDestinations() {
-    return this.destinations;
+  get destinations() {
+    return this.#destinations;
   }
 
-  getOffers() {
-    return this.offers;
+  get offersByType() {
+    return this.#offersByType;
   }
-};
+
+  getDestinationById(id) {
+    return this.#destinations.find((d) => d.id === id);
+  }
+
+  getOffersByType(type) {
+    return this.#offersByType[type] ?? [];
+  }
+}

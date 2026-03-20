@@ -1,18 +1,16 @@
-export default class BasicView {
+import {createElement} from '../render.js';
 
+export default class BasictView {
   #element = null;
 
   get template() {
-    throw new Error('Abstract method not implemented');
+    throw new Error('Abstract method not implemented: get template');
   }
 
-  get element() {
+  getElement() {
     if (!this.#element) {
-      const container = document.createElement('div');
-      container.innerHTML = this.template.trim();
-      this.#element = container.firstChild;
+      this.#element = createElement(this.template);
     }
-
     return this.#element;
   }
 
